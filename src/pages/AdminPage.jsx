@@ -33,14 +33,16 @@ export default function AdminPage() {
       const data = await response.json()
       if (!data.matches) throw new Error(data.error || 'No matches returned')
 
-      let upserted = 0
-      for (const m of data.matches) {
-        const mapped = mapMatchToDb(m)
-        const { error } = await supabase
-          .from('matches')
-          .upsert(mapped, { onConflict: 'api_match_id' })
-        if (!error) upserted++
-      }
+   let upserted = 0
+const validMatches = data.matches.filter(m => m.homeTeam?.name && m.awayTeam?.name)
+for (const m of validMatches) {
+  const mapped = mapMatchToDb(m)
+  const { error } = await supabase
+    .from('matches')
+    .upsert(mapped, { onConflict: 'api_match_id' })
+  if (!error) upserted++
+  else console.error('Upsert error:', error)
+}
       setMessage(`✅ Synced ${upserted} matches from football-data.org`)
       fetchLocalMatches()
     } catch (err) {
