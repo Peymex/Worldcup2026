@@ -35,15 +35,25 @@ export function AuthProvider({ children }) {
   }
 
   async function signUp(email, password, username, fullName) {
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username, full_name: fullName }
+      }
+    })
     if (error) throw error
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      username,
-      full_name: fullName,
-    })
-    if (profileError) throw profileError
+    if (data.user && data.user.identities && data.user.identities.length > 0) {
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        username,
+        full_name: fullName,
+      })
+      if (profileError && !profileError.message.includes('duplicate')) {
+        console.warn('Profile insert warning:', profileError.message)
+      }
+    }
     return data
   }
 
