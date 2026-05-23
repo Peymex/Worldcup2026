@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
-import { fetchMatches, mapMatchToDb } from '../lib/footballApi'
+import { mapMatchToDb } from '../lib/footballApi'
 import { calculatePoints } from '../lib/scoring'
 import { format } from 'date-fns'
 
@@ -29,9 +29,12 @@ export default function AdminPage() {
     setMessage('')
     setError('')
     try {
-      const apiMatches = await fetchMatches()
+      const response = await fetch('/api/sync-matches')
+      const data = await response.json()
+      if (!data.matches) throw new Error(data.error || 'No matches returned')
+
       let upserted = 0
-      for (const m of apiMatches) {
+      for (const m of data.matches) {
         const mapped = mapMatchToDb(m)
         const { error } = await supabase
           .from('matches')
@@ -74,7 +77,6 @@ export default function AdminPage() {
         }
       }
 
-      // Recalculate total points for all users
       const { data: allProfiles } = await supabase.from('profiles').select('id')
       for (const p of allProfiles || []) {
         const { data: userPreds } = await supabase
