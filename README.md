@@ -20,11 +20,17 @@ SUPABASE_SERVICE_ROLE_KEY=your_server_only_service_role_or_secret_key
 
 `SUPABASE_SERVICE_ROLE_KEY` is required for admin member management. In newer
 Supabase projects, you can use a server-side Secret key for this value. The API
-also accepts `SUPABASE_SECRET_KEY` if you prefer that name. Keep this key
-server-side only; never expose it with a `VITE_` prefix.
+also accepts `SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_KEY` if you prefer either
+name. Keep this key server-side only; never expose it with a `VITE_` prefix.
 
 On Vercel, add these variables under Project Settings → Environment Variables
-for Production, Preview, and Development as needed, then redeploy.
+for the environment you are visiting, usually Production for the live domain and
+Preview for branch/PR URLs, then redeploy. Add at least:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY` or `SUPABASE_SECRET_KEY`
 
 ## Scoring
 

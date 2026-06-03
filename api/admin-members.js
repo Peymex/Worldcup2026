@@ -8,10 +8,16 @@ class DisabledRealtimeTransport {
 
 function getSupabaseConfig() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    || process.env.SUPABASE_SECRET_KEY
+    || process.env.SUPABASE_SERVICE_KEY
 
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error('Member management is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY to your server environment variables, then redeploy.')
+  if (!supabaseUrl) {
+    throw new Error('Member management is missing SUPABASE_URL. Add SUPABASE_URL to your Vercel environment variables, then redeploy.')
+  }
+
+  if (!serviceRoleKey) {
+    throw new Error('Member management is missing a server Supabase key. Add SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY to your Vercel environment variables, then redeploy.')
   }
 
   return { supabaseUrl, serviceRoleKey }
