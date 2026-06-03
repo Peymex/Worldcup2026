@@ -14,7 +14,11 @@ A World Cup 2026 prediction game for friends.
 ```
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_server_only_service_role_key
 ```
+
+`SUPABASE_SERVICE_ROLE_KEY` is required for admin member management. Keep it
+server-side only; never expose it with a `VITE_` prefix.
 
 ## Scoring
 
@@ -25,8 +29,10 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ## Admin Setup
 
-After deploying, set `is_admin = true` on your profile row in Supabase.
+After deploying, set `is_admin = true` on your own profile row in Supabase.
 
 Admins can enter or update final match scores from the Admin page. Saving a final
 score marks the match as finished, scores every prediction for that match, and
 updates leaderboard totals.
+
+Admins can also create, edit, and remove members. Public sign-up is disabled.

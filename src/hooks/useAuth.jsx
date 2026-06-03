@@ -34,29 +34,6 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }
 
-  async function signUp(email, password, username, fullName) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { username, full_name: fullName }
-      }
-    })
-    if (error) throw error
-
-    if (data.user && data.user.identities && data.user.identities.length > 0) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        username,
-        full_name: fullName,
-      })
-      if (profileError && !profileError.message.includes('duplicate')) {
-        console.warn('Profile insert warning:', profileError.message)
-      }
-    }
-    return data
-  }
-
   async function signIn(email, password) {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
@@ -67,7 +44,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
