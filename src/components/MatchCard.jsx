@@ -46,29 +46,60 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
   const [homeInput, setHomeInput] = useState('')
   const [awayInput, setAwayInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [prediction, setPrediction] = useState(initialPrediction)
   const [allPredictions, setAllPredictions] = useState([])
   const [showingAll, setShowingAll] = useState(false)
+  const [currentTime, setCurrentTime] = useState(() => new Date())
+  const [actionError, setActionError] = useState('')
 
-  const now = new Date()
+  const now = currentTime
   const kickoff = new Date(match.kickoff_time)
-  const minutesUntilKickoff = (kickoff - now) / 60000
-  const isLocked = minutesUntilKickoff <= 10
-  const isRevealTime = minutesUntilKickoff <= 5
+  const hasKickoffStarted = now >= kickoff
   const isFinished = match.status === 'finished'
   const isLive = match.status === 'live'
+  const isLocked = hasKickoffStarted
+  const isRevealTime = hasKickoffStarted
+
+  useEffect(() => {
+    let timer
+
+    function scheduleNextTick() {
+      const millisecondsUntilKickoff = kickoff.getTime() - Date.now()
+      if (millisecondsUntilKickoff <= 0) {
+        setCurrentTime(new Date())
+        return
+      }
+
+      const timerDelay = Math.min(millisecondsUntilKickoff + 100, 60 * 1000)
+      timer = window.setTimeout(() => {
+        setCurrentTime(new Date())
+        if (kickoff.getTime() > Date.now()) scheduleNextTick()
+      }, timerDelay)
+    }
+
+    scheduleNextTick()
+    return () => window.clearTimeout(timer)
+  }, [match.kickoff_time])
 
   useEffect(() => {
     if (initialPrediction) {
       setHomeInput(String(initialPrediction.predicted_home_score))
       setAwayInput(String(initialPrediction.predicted_away_score))
       setPrediction(initialPrediction)
+    } else {
+      setHomeInput('')
+      setAwayInput('')
+      setPrediction(null)
     }
   }, [initialPrediction])
 
   useEffect(() => {
     if (isRevealTime || isFinished || isLive) {
       fetchAllPredictions()
+    } else {
+      setAllPredictions([])
+      setShowingAll(false)
     }
   }, [isRevealTime, isFinished, isLive, match.id])
 
@@ -84,6 +115,8 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
 
   async function handleSubmit() {
     if (homeInput === '' || awayInput === '') return
+    if (new Date() >= kickoff || isFinished || isLive) return
+    setActionError('')
     setSubmitting(true)
     const payload = {
       user_id: user.id,
@@ -96,11 +129,49 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
       .upsert(payload, { onConflict: 'user_id,match_id' })
       .select()
       .single()
-    if (!error && data) {
+    if (error) {
+      setActionError(error.message || 'Could not save prediction.')
+    } else if (data) {
       setPrediction(data)
       onPredictionSaved?.()
     }
     setSubmitting(false)
+  }
+
+  async function handleResetPrediction() {
+    if (!prediction) return
+    if (new Date() >= kickoff || isFinished || isLive) return
+    setActionError('')
+    setResetting(true)
+    const predictionId = prediction.id
+    const { error } = await supabase
+      .from('predictions')
+      .delete()
+      .eq('id', predictionId)
+      .eq('user_id', user.id)
+
+    if (error) {
+      setActionError(error.message || 'Could not reset prediction.')
+    } else {
+      const { data: remainingPrediction, error: verifyError } = await supabase
+        .from('predictions')
+        .select('id')
+        .eq('id', predictionId)
+        .maybeSingle()
+
+      if (verifyError) {
+        setActionError(verifyError.message || 'Could not verify prediction reset.')
+      } else if (remainingPrediction) {
+        setActionError('Reset is blocked by database permissions. Ask an admin to enable prediction deletes.')
+      } else {
+        setHomeInput('')
+        setAwayInput('')
+        setPrediction(null)
+        setAllPredictions(prev => prev.filter(p => p.id !== predictionId))
+        onPredictionSaved?.(match.id)
+      }
+    }
+    setResetting(false)
   }
 
   function getStatusBadge() {
@@ -122,7 +193,7 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
   }
 
   return (
-    <div className={`match-card ${isLocked ? 'locked' : ''}`}>
+    <div className={`match-card match-card-${match.status} ${isLocked ? 'locked' : ''}`}>
       <div className="match-card-header">
         <span className="match-stage">
           {match.stage?.replace(/_/g, ' ')} {match.matchday ? `· MD ${match.matchday}` : ''}
@@ -162,14 +233,24 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
             {format(kickoff, 'MMM d · HH:mm')}
           </div>
           {!isLocked && !isFinished && !isLive && (
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={handleSubmit}
-              disabled={submitting || homeInput === '' || awayInput === ''}
-              style={{ marginTop: '8px' }}
-            >
-              {submitting ? '...' : prediction ? 'Update' : 'Predict'}
-            </button>
+            <div className="match-action-buttons">
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={handleSubmit}
+                disabled={submitting || resetting || homeInput === '' || awayInput === ''}
+              >
+                {submitting ? '...' : prediction ? 'Update' : 'Predict'}
+              </button>
+              {prediction && (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={handleResetPrediction}
+                  disabled={submitting || resetting}
+                >
+                  {resetting ? 'Resetting...' : 'Reset'}
+                </button>
+              )}
+            </div>
           )}
         </div>
 
@@ -206,6 +287,12 @@ export default function MatchCard({ match, userPrediction: initialPrediction, on
       {prediction && !isLocked && !isFinished && !isLive && (
         <div style={{ fontSize: '12px', color: 'var(--green)', paddingTop: '4px' }}>
           ✓ Prediction saved
+        </div>
+      )}
+
+      {actionError && (
+        <div className="match-action-error">
+          {actionError}
         </div>
       )}
 

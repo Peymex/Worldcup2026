@@ -30,10 +30,6 @@ export function mapMatchToDb(match) {
     home_team_flag: `https://crests.football-data.org/${match.homeTeam.id}.png`,
     away_team_flag: `https://crests.football-data.org/${match.awayTeam.id}.png`,
     kickoff_time: match.utcDate,
-    home_score: match.score?.fullTime?.home ?? null,
-    away_score: match.score?.fullTime?.away ?? null,
-    status: match.status === 'FINISHED' ? 'finished' :
-            match.status === 'IN_PLAY' || match.status === 'PAUSED' ? 'live' : 'upcoming',
     stage: match.stage,
     matchday: match.matchday,
   }

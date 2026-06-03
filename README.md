@@ -14,7 +14,6 @@ A World Cup 2026 prediction game for friends.
 ```
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_FOOTBALL_API_KEY=your_football_data_api_key
 ```
 
 ## Scoring
@@ -27,3 +26,7 @@ VITE_FOOTBALL_API_KEY=your_football_data_api_key
 ## Admin Setup
 
 After deploying, set `is_admin = true` on your profile row in Supabase.
+
+Admins can enter or update final match scores from the Admin page. Saving a final
+score marks the match as finished, scores every prediction for that match, and
+updates leaderboard totals.
