@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import AuthPage from './pages/AuthPage'
 import MatchesPage from './pages/MatchesPage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import PredictionsPage from './pages/PredictionsPage'
 import AdminPage from './pages/AdminPage'
 
 function PrivateRoute({ children }) {
@@ -19,6 +20,7 @@ function AppRoutes() {
       <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index element={<MatchesPage />} />
+        <Route path="predictions" element={<PredictionsPage />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
         <Route path="admin" element={<AdminPage />} />
       </Route>

@@ -31,39 +31,18 @@ export default function Layout() {
             WC<span>2026</span>
           </NavLink>
 
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <NavLink to="/" end style={({ isActive }) => ({
-              padding: '6px 14px',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '600',
-              background: isActive ? 'var(--accent-dim)' : 'transparent',
-              color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-              transition: 'all 0.15s',
-            })}>
+          <div className="navbar-links">
+            <NavLink to="/" end className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
               Matches
             </NavLink>
-            <NavLink to="/leaderboard" style={({ isActive }) => ({
-              padding: '6px 14px',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '600',
-              background: isActive ? 'var(--accent-dim)' : 'transparent',
-              color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-              transition: 'all 0.15s',
-            })}>
+            <NavLink to="/predictions" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
+              Predictions
+            </NavLink>
+            <NavLink to="/leaderboard" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
               Leaderboard
             </NavLink>
             {profile?.is_admin && (
-              <NavLink to="/admin" style={({ isActive }) => ({
-                padding: '6px 14px',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                background: isActive ? 'var(--accent-dim)' : 'transparent',
-                color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                transition: 'all 0.15s',
-              })}>
+              <NavLink to="/admin" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
                 Admin
               </NavLink>
             )}
