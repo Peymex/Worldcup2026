@@ -35,9 +35,9 @@ Preview for branch/PR URLs, then redeploy. Add at least:
 ## Scoring
 
 - Exact score: 10 points
-- Correct goal difference + result: 7 points  
-- Correct result (win/draw/loss): 5 points
-- Just participating: 1 point
+- Correct winner with correct goal difference, or correct draw without exact score: 7 points
+- Correct winning team only: 5 points
+- Participation: 2 points
 
 ## Admin Setup
 

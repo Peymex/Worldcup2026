@@ -173,6 +173,28 @@ input { font-family: 'DM Sans', sans-serif; }
 .prediction-score-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 58px; border-radius: 999px; padding: 6px 10px; background: var(--bg); border: 1px solid rgba(232,200,74,0.28); color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 21px; line-height: 1; }
 .prediction-points-pill { display: block; width: fit-content; margin: 6px auto 0; color: var(--green); font-size: 11px; font-weight: 900; }
 
+.competition-rules-page { display: flex; flex-direction: column; gap: 22px; }
+.competition-rules-header { border: 1px solid rgba(232,200,74,0.22); border-radius: var(--radius); background: linear-gradient(135deg, rgba(232,200,74,0.11), rgba(19,19,26,0.96)); padding: 28px; }
+.competition-rules-kicker { color: var(--accent); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+.competition-rules-title { font-size: 44px; color: var(--text-primary); margin-bottom: 12px; }
+.competition-rules-intro { max-width: 760px; color: var(--text-secondary); font-size: 15px; }
+.competition-rules-section { border-top: 1px solid var(--border); padding-top: 22px; }
+.competition-rules-section > p { color: var(--text-secondary); font-size: 15px; }
+.competition-rules-section-label { color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; margin-bottom: 12px; }
+.competition-scoring-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.competition-score-rule { min-height: 126px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
+.competition-score-points { width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: #0a0a0f; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Bebas Neue', sans-serif; font-size: 30px; line-height: 1; }
+.competition-score-rule h2 { color: var(--text-primary); font-size: 22px; margin-bottom: 6px; }
+.competition-score-rule p { color: var(--text-secondary); font-size: 13px; line-height: 1.45; }
+.competition-notes-list { display: grid; gap: 10px; }
+.competition-notes-list p { border-left: 2px solid var(--accent); padding-left: 12px; color: var(--text-secondary); font-size: 15px; }
+.competition-prize-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.competition-prize-item { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); padding: 16px; }
+.competition-prize-place { display: block; color: var(--text-secondary); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+.competition-prize-item strong { display: block; color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 42px; line-height: 1; margin: 8px 0 4px; }
+.competition-prize-item span:last-child { color: var(--text-secondary); font-size: 13px; }
+.competition-tie-note { margin-top: 14px; border: 1px solid rgba(96,165,250,0.25); border-radius: var(--radius-sm); background: rgba(96,165,250,0.08); color: var(--text-secondary); padding: 14px 16px; font-size: 14px; }
+
 .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg); }
 .auth-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
 .auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 4px; }
@@ -318,6 +340,10 @@ input { font-family: 'DM Sans', sans-serif; }
   .predictions-player-heading, .predictions-player-cell { width: 178px; min-width: 178px; }
   .predictions-match-heading, .predictions-cell { width: 126px; min-width: 126px; }
   .predictions-player-info { max-width: 108px; }
+  .competition-rules-header { padding: 22px; }
+  .competition-rules-title { font-size: 34px; }
+  .competition-scoring-grid, .competition-prize-grid { grid-template-columns: 1fr; }
+  .competition-score-rule { min-height: 0; }
   .date-chip { min-width: 104px; }
   .match-date-header { align-items: flex-start; }
   .match-date-count { display: none; }

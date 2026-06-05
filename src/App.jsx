@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage'
 import MatchesPage from './pages/MatchesPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import PredictionsPage from './pages/PredictionsPage'
+import RulesPage from './pages/RulesPage'
 import AdminPage from './pages/AdminPage'
 
 function PrivateRoute({ children }) {
@@ -22,6 +23,7 @@ function AppRoutes() {
         <Route index element={<MatchesPage />} />
         <Route path="predictions" element={<PredictionsPage />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
+        <Route path="rules" element={<RulesPage />} />
         <Route path="admin" element={<AdminPage />} />
       </Route>
     </Routes>

@@ -41,6 +41,9 @@ export default function Layout() {
             <NavLink to="/leaderboard" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
               Leaderboard
             </NavLink>
+            <NavLink to="/rules" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
+              Rules
+            </NavLink>
             {profile?.is_admin && (
               <NavLink to="/admin" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
                 Admin
@@ -102,22 +105,22 @@ export default function Layout() {
               </div>
               <div className="rules-score-item">
                 <span className="rules-score-value">7</span>
-                <span className="rules-score-label">Right goal difference</span>
+                <span className="rules-score-label">Right margin</span>
               </div>
               <div className="rules-score-item">
                 <span className="rules-score-value">5</span>
-                <span className="rules-score-label">Right result</span>
+                <span className="rules-score-label">Right winner</span>
               </div>
               <div className="rules-score-item">
-                <span className="rules-score-value">1</span>
+                <span className="rules-score-value">2</span>
                 <span className="rules-score-label">Participated</span>
               </div>
             </div>
 
             <div className="rules-notes">
-              <div>Exact score means both teams' scores match the final result.</div>
-              <div>Right goal difference means the margin and winner are correct, but the exact score is not.</div>
-              <div>Right result means you picked the correct home win, away win, or draw.</div>
+              <div>Exact score means both teams' scores and the match result are correct.</div>
+              <div>Right margin means the winner and goal difference are correct, or the match is correctly predicted as a draw without the exact score.</div>
+              <div>Right winner means the winning team is correct, but the exact score and goal difference are not.</div>
               <div>You can update or reset a prediction until that match's kickoff time.</div>
               <div>Other players' predictions are revealed once the match has kicked off.</div>
             </div>
