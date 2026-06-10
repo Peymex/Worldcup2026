@@ -55,6 +55,8 @@ input { font-family: 'DM Sans', sans-serif; }
 .navbar-link:hover { color: var(--text-primary); }
 .navbar-right { display: flex; align-items: center; gap: 12px; }
 .navbar-username { font-size: 14px; color: var(--text-secondary); }
+.navbar-account-link { color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-weight: 700; transition: all 0.15s ease; }
+.navbar-account-link:hover, .navbar-account-link.active { color: var(--accent); border-color: rgba(232,200,74,0.35); background: var(--accent-dim); }
 .rules-help-button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); color: var(--accent); font-size: 15px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
 .rules-help-button:hover, .rules-help-button:focus-visible { outline: none; border-color: var(--accent); background: var(--accent-dim); color: var(--text-primary); }
 
@@ -195,6 +197,16 @@ input { font-family: 'DM Sans', sans-serif; }
 .competition-prize-item span:last-child { color: var(--text-secondary); font-size: 13px; }
 .competition-tie-note { margin-top: 14px; border: 1px solid rgba(96,165,250,0.25); border-radius: var(--radius-sm); background: rgba(96,165,250,0.08); color: var(--text-secondary); padding: 14px 16px; font-size: 14px; }
 
+.account-page { max-width: 760px; margin: 0 auto; }
+.account-grid { display: grid; grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr); gap: 16px; align-items: start; }
+.account-summary { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); padding: 20px; display: flex; align-items: center; gap: 14px; }
+.account-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(232,200,74,0.28); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; font-weight: 900; }
+.account-summary h3 { color: var(--text-primary); font-size: 22px; margin-bottom: 4px; }
+.account-summary p { color: var(--text-secondary); font-size: 13px; overflow-wrap: anywhere; }
+.account-password-card { display: flex; flex-direction: column; }
+.account-card-title { font-family: 'Bebas Neue', sans-serif; color: var(--text-primary); font-size: 24px; margin-bottom: 16px; }
+.account-success { background: var(--green-dim); border: 1px solid rgba(74,222,128,0.3); border-radius: var(--radius-sm); color: var(--green); padding: 10px 14px; font-size: 13px; margin-bottom: 16px; }
+
 .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg); }
 .auth-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
 .auth-logo { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 4px; }
@@ -327,6 +339,7 @@ input { font-family: 'DM Sans', sans-serif; }
   .navbar-links::-webkit-scrollbar { display: none; }
   .navbar-link { padding: 6px 10px; font-size: 13px; }
   .navbar-username { display: none; }
+  .navbar-account-link { padding: 6px 10px; }
   .rules-score-grid { grid-template-columns: 1fr; }
   .predictions-page { width: 100%; margin-left: 0; transform: none; }
   .predictions-header { align-items: stretch; flex-direction: column; }
@@ -344,6 +357,8 @@ input { font-family: 'DM Sans', sans-serif; }
   .competition-rules-title { font-size: 34px; }
   .competition-scoring-grid, .competition-prize-grid { grid-template-columns: 1fr; }
   .competition-score-rule { min-height: 0; }
+  .account-grid { grid-template-columns: 1fr; }
+  .account-summary { align-items: flex-start; }
   .date-chip { min-width: 104px; }
   .match-date-header { align-items: flex-start; }
   .match-date-count { display: none; }

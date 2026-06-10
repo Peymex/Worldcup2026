@@ -55,6 +55,9 @@ export default function Layout() {
             <span className="navbar-username">
               {profile?.username || profile?.full_name || ''}
             </span>
+            <NavLink to="/account" className={({ isActive }) => `navbar-account-link ${isActive ? 'active' : ''}`}>
+              Account
+            </NavLink>
             <button
               className="rules-help-button"
               type="button"
