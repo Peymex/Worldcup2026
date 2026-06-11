@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
-import { calculatePoints } from '../lib/scoring'
 import { format } from 'date-fns'
 
 function buildScoreInputs(matchList) {
@@ -135,6 +134,38 @@ export default function AdminPage() {
     return data.members || []
   }
 
+  async function requestAdminScore(body) {
+    const headers = await getAuthHeaders()
+    const response = await fetch('/api/admin-scores', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    })
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Score management request failed.')
+    }
+
+    return data
+  }
+
+  function applyLeaderboardTotals(totals) {
+    const totalsById = new Map(
+      (totals || []).map(item => [String(item.id), item.total_points || 0])
+    )
+
+    setMembers(currentMembers => currentMembers.map(member => {
+      const memberId = String(member.id)
+      if (!totalsById.has(memberId)) return member
+
+      return {
+        ...member,
+        total_points: totalsById.get(memberId),
+      }
+    }))
+  }
+
   async function fetchMembers() {
     setMembersLoading(true)
     try {
@@ -262,55 +293,6 @@ export default function AdminPage() {
     }))
   }
 
-  async function scorePredictionsForMatch(matchId, actualHome, actualAway) {
-    const { data: predictions, error: predictionError } = await supabase
-      .from('predictions')
-      .select('*')
-      .eq('match_id', matchId)
-
-    if (predictionError) throw predictionError
-
-    for (const prediction of predictions || []) {
-      const points = calculatePoints(prediction, actualHome, actualAway)
-      const { error: updateError } = await supabase
-        .from('predictions')
-        .update({ points_earned: points })
-        .eq('id', prediction.id)
-
-      if (updateError) throw updateError
-    }
-
-    return predictions?.length || 0
-  }
-
-  async function refreshLeaderboardTotals() {
-    const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id')
-
-    if (profilesError) throw profilesError
-
-    for (const player of profiles || []) {
-      const { data: predictions, error: predictionError } = await supabase
-        .from('predictions')
-        .select('points_earned')
-        .eq('user_id', player.id)
-
-      if (predictionError) throw predictionError
-
-      const total = predictions?.reduce((sum, prediction) => {
-        return sum + (prediction.points_earned || 0)
-      }, 0) || 0
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ total_points: total })
-        .eq('id', player.id)
-
-      if (updateError) throw updateError
-    }
-  }
-
   async function saveFinalScore(match) {
     const score = scoreInputs[match.id] || {}
     const homeScore = Number(score.home)
@@ -331,22 +313,17 @@ export default function AdminPage() {
     setError('')
 
     try {
-      const { error: matchError } = await supabase
-        .from('matches')
-        .update({
-          home_score: homeScore,
-          away_score: awayScore,
-          status: 'finished',
-        })
-        .eq('id', match.id)
+      const result = await requestAdminScore({
+        action: 'finalize',
+        matchId: match.id,
+        homeScore,
+        awayScore,
+      })
 
-      if (matchError) throw matchError
-
-      const scoredCount = await scorePredictionsForMatch(match.id, homeScore, awayScore)
-      await refreshLeaderboardTotals()
+      applyLeaderboardTotals(result.totals)
       await fetchLocalMatches()
 
-      setMessage(`Saved ${match.home_team} ${homeScore}-${awayScore} ${match.away_team}. Scored ${scoredCount} predictions and updated the leaderboard.`)
+      setMessage(`Saved ${match.home_team} ${homeScore}-${awayScore} ${match.away_team}. Scored ${result.scoredCount} predictions and updated the leaderboard.`)
     } catch (err) {
       setError(`Saving final score failed: ${err.message}`)
     }
@@ -360,25 +337,12 @@ export default function AdminPage() {
     setError('')
 
     try {
-      const { error: matchError } = await supabase
-        .from('matches')
-        .update({
-          home_score: null,
-          away_score: null,
-          status: 'upcoming',
-        })
-        .eq('id', match.id)
+      const result = await requestAdminScore({
+        action: 'reset',
+        matchId: match.id,
+      })
 
-      if (matchError) throw matchError
-
-      const { error: predictionsError } = await supabase
-        .from('predictions')
-        .update({ points_earned: 0 })
-        .eq('match_id', match.id)
-
-      if (predictionsError) throw predictionsError
-
-      await refreshLeaderboardTotals()
+      applyLeaderboardTotals(result.totals)
       await fetchLocalMatches()
 
       setMessage(`Reset ${match.home_team} vs ${match.away_team}. Users can predict again, and leaderboard totals were updated.`)

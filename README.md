@@ -18,7 +18,7 @@ SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_server_only_service_role_or_secret_key
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` is required for admin member management. In newer
+`SUPABASE_SERVICE_ROLE_KEY` is required for admin member and score management. In newer
 Supabase projects, you can use a server-side Secret key for this value. The API
 also accepts `SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_KEY` if you prefer either
 name. Keep this key server-side only; never expose it with a `VITE_` prefix.
