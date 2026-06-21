@@ -42,6 +42,7 @@ export default function AdminPage() {
   const { profile } = useAuth()
   const [savingScores, setSavingScores] = useState({})
   const [resettingMatches, setResettingMatches] = useState({})
+  const [recalculatingScores, setRecalculatingScores] = useState(false)
   const [members, setMembers] = useState([])
   const [membersLoading, setMembersLoading] = useState(true)
   const [memberSaving, setMemberSaving] = useState(false)
@@ -353,6 +354,22 @@ export default function AdminPage() {
     setResettingMatches(prev => ({ ...prev, [match.id]: false }))
   }
 
+  async function recalculateAllScores() {
+    setRecalculatingScores(true)
+    setMessage('')
+    setError('')
+
+    try {
+      const result = await requestAdminScore({ action: 'recalculate' })
+      applyLeaderboardTotals(result.totals)
+      setMessage(`Checked ${result.predictionCount} predictions, corrected ${result.updatedPredictionCount}, and refreshed the leaderboard.`)
+    } catch (err) {
+      setError(`Recalculating scores failed: ${err.message}`)
+    }
+
+    setRecalculatingScores(false)
+  }
+
   if (!profile?.is_admin) {
     return (
       <div className="empty-state">
@@ -630,9 +647,19 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="section-header">
+      <div className="section-header admin-score-section-header">
         <h2 className="section-title">Manual Final Scores</h2>
-        <span className="section-count">{matches.length} total</span>
+        <div className="admin-score-header-actions">
+          <span className="section-count">{matches.length} total</span>
+          <button
+            className="btn btn-ghost btn-sm"
+            type="button"
+            onClick={recalculateAllScores}
+            disabled={recalculatingScores}
+          >
+            {recalculatingScores ? 'Recalculating...' : 'Recalculate All Scores'}
+          </button>
+        </div>
       </div>
 
       {loading ? (

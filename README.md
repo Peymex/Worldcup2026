@@ -47,4 +47,8 @@ Admins can enter or update final match scores from the Admin page. Saving a fina
 score marks the match as finished, scores every prediction for that match, and
 updates leaderboard totals.
 
+If predictions are inserted directly into Supabase after a match is finished,
+use **Recalculate All Scores** on the Admin page to score them and refresh every
+leaderboard total.
+
 Admins can also create, edit, and remove members. Public sign-up is disabled.
